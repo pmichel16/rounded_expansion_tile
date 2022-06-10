@@ -6,6 +6,7 @@ class RoundedExpansionTile extends StatefulWidget {
   final bool? dense;
   final bool? enabled;
   final bool? enableFeedback;
+  final bool? expanded;
   final Color? focusColor;
   final FocusNode? focusNode;
   final double? horizontalTitleGap;
@@ -45,6 +46,7 @@ class RoundedExpansionTile extends StatefulWidget {
       this.dense,
       this.enabled,
       this.enableFeedback,
+      this.expanded,
       this.focusColor,
       this.focusNode,
       this.horizontalTitleGap,
@@ -70,8 +72,7 @@ class RoundedExpansionTile extends StatefulWidget {
   _RoundedExpansionTileState createState() => _RoundedExpansionTileState();
 }
 
-class _RoundedExpansionTileState extends State<RoundedExpansionTile>
-    with TickerProviderStateMixin {
+class _RoundedExpansionTileState extends State<RoundedExpansionTile> with TickerProviderStateMixin {
   late bool _expanded;
   bool? _rotateTrailing;
   bool? _noTrailing;
@@ -84,15 +85,13 @@ class _RoundedExpansionTileState extends State<RoundedExpansionTile>
   @override
   void initState() {
     super.initState();
-    _expanded = false;
+    _expanded = widget.expanded ?? false;
     // If not provided, this will be true
-    _rotateTrailing =
-        widget.rotateTrailing == null ? true : widget.rotateTrailing;
+    _rotateTrailing = widget.rotateTrailing == null ? true : widget.rotateTrailing;
     // If not provided this will be false
     _noTrailing = widget.noTrailing == null ? false : widget.noTrailing;
-    _controller = AnimationController(
-        vsync: this,
-        duration: widget.duration == null ? defaultDuration : widget.duration);
+    _controller =
+        AnimationController(vsync: this, duration: widget.duration == null ? defaultDuration : widget.duration);
 
     _iconController = AnimationController(
       duration: widget.duration == null ? defaultDuration : widget.duration,
@@ -174,17 +173,10 @@ class _RoundedExpansionTileState extends State<RoundedExpansionTile>
             },
           ),
           AnimatedCrossFade(
-              firstCurve: widget.curve == null
-                  ? Curves.fastLinearToSlowEaseIn
-                  : widget.curve!,
-              secondCurve: widget.curve == null
-                  ? Curves.fastLinearToSlowEaseIn
-                  : widget.curve!,
-              crossFadeState: _expanded
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-              duration:
-                  widget.duration == null ? defaultDuration : widget.duration!,
+              firstCurve: widget.curve == null ? Curves.fastLinearToSlowEaseIn : widget.curve!,
+              secondCurve: widget.curve == null ? Curves.fastLinearToSlowEaseIn : widget.curve!,
+              crossFadeState: _expanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+              duration: widget.duration == null ? defaultDuration : widget.duration!,
               firstChild:
 
                   /// Returns Listviews for the children.
@@ -206,17 +198,14 @@ class _RoundedExpansionTileState extends State<RoundedExpansionTile>
   Widget? _trailingIcon() {
     if (widget.trailing != null) {
       if (_rotateTrailing!) {
-        return RotationTransition(
-            turns: Tween(begin: 0.0, end: 0.5).animate(_iconController),
-            child: widget.trailing);
+        return RotationTransition(turns: Tween(begin: 0.0, end: 0.5).animate(_iconController), child: widget.trailing);
       } else {
         // If developer sets rotateTrailing to false the widget will just be returned.
         return widget.trailing;
       }
     } else {
       // Default trailing is an Animated Menu Icon.
-      return AnimatedIcon(
-          icon: AnimatedIcons.close_menu, progress: _controller);
+      return AnimatedIcon(icon: AnimatedIcons.close_menu, progress: _controller);
     }
   }
 }
