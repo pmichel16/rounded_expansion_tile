@@ -99,7 +99,10 @@ class _RoundedExpansionTileState extends State<RoundedExpansionTile> with Ticker
     );
 
     _controller.forward();
-    // _iconController.forward();
+    if (_expanded) {
+      _iconController.forward();
+      _iconController.forward();
+    }
   }
 
   @override
